@@ -18,21 +18,31 @@ repositories {
     mavenCentral()
 }
 
+configurations.all {
+    exclude group: 'commons-logging', module: 'commons-logging'
+}
+
 dependencies {
     compile "org.scala-lang:scala-library:${scalaVersion}"
     compile "com.typesafe.scala-logging:scala-logging_${scalaBuildVersion}:3.5.0"
-    compile "org.apache.spark:spark-core_${scalaBuildVersion}:2.1.1"
-    compile "ch.qos.logback:logback-classic:1.1.7"
+    compile "org.slf4j:jcl-over-slf4j:1.7.21"
+    compile "log4j:log4j:1.2.17"
     compile "com.typesafe:config:1.3.0"
     compile "joda-time:joda-time:2.9.3"
-    compile "org.slf4j:jcl-over-slf4j:1.7.21"
-    compile "org.slf4j:log4j-over-slf4j:1.7.21"
+    runtime "org.slf4j:slf4j-log4j12:1.7.25"
+    compileOnly "org.apache.spark:spark-core_${scalaBuildVersion}:2.1.1"
 
     testCompile "org.scalatest:scalatest_${scalaBuildVersion}:3.0.0"
-    testRuntime 'org.pegdown:pegdown:1.6.0'
+    testRuntime "org.pegdown:pegdown:1.6.0"
 }
 
 task wrapper(type: Wrapper) {
     gradleVersion = '3.5'
+}
+
+task sparkSubmit(type: Exec, dependsOn: shadowJar) {
+    commandLine 'spark-submit', '--class', mainClassName,
+            '--driver-java-options', "-Dlog4j.configuration=driver-log4j.properties",
+            shadowJar.archivePath, '/usr/local/opt/apache-spark/README.md', "${buildDir}/wordcounts"
 }
 
