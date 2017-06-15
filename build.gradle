@@ -1,0 +1,38 @@
+plugins {
+    id 'com.github.maiflai.scalatest' version '0.15'
+    id 'com.github.johnrengelman.shadow' version '2.0.0'
+}
+
+apply plugin: 'scala'
+apply plugin: 'application'
+
+group = 'au.com.example'
+version = '0.0.1-SNAPSHOT'
+
+mainClassName = 'au.com.example.Application'
+startScripts.applicationName = 'spark-app'
+distTar.archiveName = "spark-app.${distTar.extension}"
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.scala-lang:scala-library:${scalaVersion}"
+    compile "com.typesafe.scala-logging:scala-logging_${scalaBuildVersion}:3.5.0"
+    compile "org.apache.spark:spark-core_${scalaBuildVersion}:2.1.1"
+    compile "ch.qos.logback:logback-classic:1.1.7"
+    compile "com.typesafe:config:1.3.0"
+    compile "joda-time:joda-time:2.9.3"
+    compile "org.slf4j:jcl-over-slf4j:1.7.21"
+    compile "org.slf4j:log4j-over-slf4j:1.7.21"
+
+    testCompile "org.scalatest:scalatest_${scalaBuildVersion}:3.0.0"
+    testRuntime 'org.pegdown:pegdown:1.6.0'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.5'
+}
+
